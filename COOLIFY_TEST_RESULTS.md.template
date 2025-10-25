@@ -1,0 +1,351 @@
+# Coolify Test Results
+
+**Test Date**: [YYYY-MM-DD]
+**Tester**: [Your Name]
+**Coolify Version**: [Version]
+**Test Duration**: [Hours]
+
+---
+
+## Executive Summary
+
+**Final Recommendation**: [✅ ADOPT / ⚠️ CONDITIONAL / ❌ REJECT]
+
+**One-Line Summary**: [Brief summary of test results]
+
+**Key Findings**:
+- [Finding 1]
+- [Finding 2]
+- [Finding 3]
+
+---
+
+## Test Environment
+
+**Server**:
+- OS: [Ubuntu 22.04 / etc]
+- CPU: [cores]
+- RAM: [GB]
+- Coolify URL: [http://your-server:8000]
+
+**DNS Configuration**:
+- Domain: [preview.yourdomain.com]
+- Wildcard DNS: [*.preview.yourdomain.com → Server IP]
+- TTL: [60 seconds]
+
+**GitHub Repository**:
+- Repo: [your-username/coolify-test-app]
+- Branch: [main]
+- PRs Created: [#1, #2, etc]
+
+---
+
+## Phase 1: Environment Setup
+
+### Coolify Installation
+- [ ] Coolify installed successfully
+- [ ] UI accessible at server IP
+- [ ] Initial setup wizard completed
+- **Notes**: [Any issues during installation]
+
+### DNS Configuration
+- [ ] Wildcard DNS record created
+- [ ] DNS resolves correctly (`dig pr-test.preview.yourdomain.com`)
+- [ ] TTL set to 60 seconds
+- **Notes**: [DNS propagation time, issues]
+
+### GitHub Integration
+- [ ] GitHub App created
+- [ ] Repository connected
+- [ ] Webhooks configured
+- **Notes**: [Any issues]
+
+**Phase 1 Result**: [✅ PASS / ❌ FAIL]
+
+---
+
+## Phase 2: Single Service Test
+
+### Backend Deployment
+- [ ] Backend service builds successfully
+- [ ] Container starts
+- [ ] Health check passes
+- [ ] API accessible at `/health`
+
+**Build Time**: [Minutes]
+**Logs**: [Any errors]
+
+### Database Connectivity
+- [ ] PostgreSQL container starts
+- [ ] Backend connects to database
+- [ ] Test query succeeds
+
+**Phase 2 Result**: [✅ PASS / ❌ FAIL]
+
+---
+
+## Phase 3: Full Stack Deployment
+
+### All Services Deployed
+- [ ] Frontend builds successfully
+- [ ] Backend builds successfully
+- [ ] PostgreSQL starts
+- [ ] All health checks pass
+
+**Deployment Time**: [Minutes]
+
+### Container Names Observed
+
+**CRITICAL TEST**: What are the actual container names?
+
+```bash
+# List containers
+docker ps --filter "name=coolify-test"
+
+# Actual names:
+- Frontend: [coolify-test-frontend OR coolify-test-frontend-pr-123]
+- Backend: [coolify-test-backend OR coolify-test-backend-pr-123]
+- Database: [coolify-test-postgres OR coolify-test-postgres-pr-123]
+```
+
+**Did Coolify rename containers?** [YES / NO]
+
+**If YES**: This is the critical issue for EPRLive24!
+
+### Service Communication Test
+
+**Frontend → Backend**:
+```bash
+# Test from frontend container
+docker exec -it [frontend-container] curl http://backend:8000/health
+```
+**Result**: [✅ SUCCESS / ❌ FAILED]
+**Error**: [If failed]
+
+**Backend → Database**:
+```bash
+# Test from backend container
+docker exec -it [backend-container] ping postgres
+```
+**Result**: [✅ SUCCESS / ❌ FAILED]
+**Error**: [If failed]
+
+**Phase 3 Result**: [✅ PASS / ❌ FAIL]
+
+---
+
+## Phase 4: Preview Deployments
+
+### PR #1: Test Preview Creation
+
+**PR Details**:
+- Branch: [test-preview-1]
+- Title: [Test: Coolify Preview Deployment]
+- Created: [Timestamp]
+
+**Preview Deployment**:
+- [ ] Coolify detected PR webhook
+- [ ] Preview deployment started automatically
+- [ ] Deployment completed
+- [ ] Preview URL posted to PR comments
+- **URL**: [pr-X.preview.yourdomain.com]
+- **Time to Deploy**: [Minutes]
+
+### Functionality Tests
+
+**Authentication Flow**:
+1. Navigate to preview URL
+2. Click "Login"
+3. Enter test credentials
+4. Login succeeds
+
+**Result**: [✅ PASS / ❌ FAIL]
+**Error**: [If failed]
+
+**Todo CRUD**:
+1. Login to preview
+2. Create new todo
+3. Mark todo as complete
+4. Delete todo
+
+**Result**: [✅ PASS / ❌ FAIL]
+**Error**: [If failed]
+
+### PR #2: Multiple Previews
+
+**PR Details**:
+- Branch: [test-preview-2]
+- Title: [Test: Multiple Previews]
+- Created: [Timestamp]
+
+**Concurrent Previews**:
+- [ ] PR #1 preview still running
+- [ ] PR #2 preview created successfully
+- [ ] Both previews accessible
+- [ ] No container name conflicts
+- [ ] No port conflicts
+
+**Result**: [✅ PASS / ❌ FAIL]
+
+### Preview Update Test
+
+**Test**: Push new commit to PR #1
+
+**Result**:
+- [ ] Coolify detected webhook
+- [ ] Preview rebuilt automatically
+- [ ] Changes visible in preview
+- **Time to Rebuild**: [Minutes]
+
+### Preview Cleanup Test
+
+**Test**: Close PR #1
+
+**Result**:
+- [ ] Coolify detected PR close
+- [ ] Preview deployment stopped
+- [ ] Containers removed
+- [ ] Database removed (if PR-specific)
+- [ ] DNS no longer resolves (after TTL)
+- **Time to Cleanup**: [Minutes]
+
+**Phase 4 Result**: [✅ PASS / ❌ FAIL]
+
+---
+
+## Issues Encountered
+
+### Issue 1: [Issue Title]
+
+**Severity**: [🔴 CRITICAL / 🟡 MEDIUM / 🟢 LOW]
+
+**Description**: [What went wrong]
+
+**Impact**: [How it affects functionality]
+
+**Workaround Applied**: [Solution, if any]
+
+**Workaround Success**: [✅ YES / ❌ NO]
+
+**Notes**: [Additional context]
+
+---
+
+### Issue 2: [Issue Title]
+
+[Same format as Issue 1]
+
+---
+
+## Workarounds Applied
+
+List all workarounds used and whether they worked:
+
+1. **[Workaround Name]**
+   - **Applied to**: [Service/Configuration]
+   - **Result**: [✅ WORKED / ❌ FAILED]
+   - **Complexity**: [LOW / MEDIUM / HIGH]
+   - **Maintainability**: [EASY / MODERATE / DIFFICULT]
+
+---
+
+## Performance Metrics
+
+**Deployment Times**:
+- Initial deployment: [X minutes]
+- Preview deployment: [X minutes]
+- Rebuild on update: [X minutes]
+- Cleanup on close: [X minutes]
+
+**Resource Usage** (during 2 concurrent previews):
+- CPU: [%]
+- RAM: [GB used / GB total]
+- Disk: [GB used]
+
+---
+
+## Final Assessment
+
+### What Worked Well ✅
+
+1. [Thing that worked]
+2. [Thing that worked]
+3. [Thing that worked]
+
+### What Failed ❌
+
+1. [Thing that failed]
+2. [Thing that failed]
+3. [Thing that failed]
+
+### Critical Blockers 🛑
+
+[List any issues that would prevent EPRLive24 from using Coolify]
+
+1. [Blocker 1]
+2. [Blocker 2]
+
+---
+
+## Recommendation
+
+### For EPRLive24
+
+**Recommendation**: [✅ ADOPT COOLIFY / ⚠️ CONDITIONAL ADOPTION / ❌ DO NOT ADOPT]
+
+**Reasoning**:
+
+[Detailed explanation of recommendation]
+
+**Conditions** (if conditional):
+- [Condition 1]
+- [Condition 2]
+
+### Alternative Recommendation
+
+If Coolify is not suitable:
+
+**Recommended Alternative**: [PullPreview / Custom GitHub Actions / Other]
+
+**Why**: [Reasoning]
+
+**Next Steps**: [What to do next]
+
+---
+
+## Lessons Learned for EPRLive24
+
+1. **[Lesson 1]**: [What we learned and how it applies to EPRLive24]
+2. **[Lesson 2]**: [What we learned and how it applies to EPRLive24]
+3. **[Lesson 3]**: [What we learned and how it applies to EPRLive24]
+
+---
+
+## Appendix
+
+### Container Names Observed
+
+```bash
+# Full docker ps output
+[Paste output here]
+```
+
+### Environment Variables
+
+```bash
+# docker compose config output
+[Paste relevant environment variables]
+```
+
+### Error Logs
+
+```bash
+# Any critical errors from Coolify or containers
+[Paste logs here]
+```
+
+---
+
+**Test Completed**: [Date & Time]
+**Report Prepared By**: [Name]
+**Next Action**: [What should happen based on these results]

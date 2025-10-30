@@ -3,18 +3,44 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+interface EnvironmentInfo {
+  environment: {
+    type: 'production' | 'preview' | 'development';
+    name: string;
+    pr_number: string | null;
+  };
+  deployment: {
+    timestamp: string;
+    api_url: string;
+    frontend_url: string;
+  };
+  database: {
+    host: string;
+    name: string;
+  };
+  test_change: string;
+}
+
 export default function Home() {
   const [apiUrl, setApiUrl] = useState('');
   const [backendStatus, setBackendStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  const [envInfo, setEnvInfo] = useState<EnvironmentInfo | null>(null);
 
   useEffect(() => {
-    setApiUrl(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000');
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    setApiUrl(baseUrl);
 
     // Check backend health
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`)
+    fetch(`${baseUrl}/health`)
       .then(res => res.json())
       .then(() => setBackendStatus('online'))
       .catch(() => setBackendStatus('offline'));
+
+    // Fetch environment info
+    fetch(`${baseUrl}/api/environment`)
+      .then(res => res.json())
+      .then(data => setEnvInfo(data))
+      .catch(err => console.error('Failed to fetch environment info:', err));
   }, []);
 
   return (
@@ -29,6 +55,67 @@ export default function Home() {
             Testing PR preview environments with Coolify
           </p>
         </div>
+
+        {/* Environment Info Banner */}
+        {envInfo && (
+          <div className={`mb-8 p-6 rounded-lg border-2 ${
+            envInfo.environment.type === 'preview'
+              ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500'
+              : envInfo.environment.type === 'production'
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-500'
+              : 'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
+          }`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">
+                  {envInfo.environment.type === 'preview' ? '🚀' :
+                   envInfo.environment.type === 'production' ? '🏭' : '🔧'}
+                </span>
+                <div>
+                  <h2 className="text-2xl font-bold">
+                    {envInfo.environment.name} Environment
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {envInfo.environment.type === 'preview'
+                      ? 'This is a PR preview deployment - changes are isolated!'
+                      : envInfo.environment.type === 'production'
+                      ? 'Production deployment'
+                      : 'Local development environment'}
+                  </p>
+                </div>
+              </div>
+              <div className={`px-4 py-2 rounded-full font-semibold ${
+                envInfo.environment.type === 'preview'
+                  ? 'bg-purple-500 text-white'
+                  : envInfo.environment.type === 'production'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-blue-500 text-white'
+              }`}>
+                {envInfo.environment.type.toUpperCase()}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="p-3 bg-white dark:bg-gray-800 rounded">
+                <span className="font-semibold">API URL:</span>
+                <p className="text-gray-600 dark:text-gray-400 break-all">
+                  {envInfo.deployment.api_url}
+                </p>
+              </div>
+              <div className="p-3 bg-white dark:bg-gray-800 rounded">
+                <span className="font-semibold">Database:</span>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {envInfo.database.host} / {envInfo.database.name}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 p-3 bg-white dark:bg-gray-800 rounded border-l-4 border-green-500">
+              <p className="font-semibold text-green-600 dark:text-green-400">✓ Test Change Detected</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{envInfo.test_change}</p>
+            </div>
+          </div>
+        )}
 
         {/* Backend Status */}
         <div className="mb-8 p-4 rounded-lg border border-gray-200 dark:border-gray-700">

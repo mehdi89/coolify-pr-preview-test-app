@@ -101,8 +101,14 @@ Password: admin123
    POSTGRES_DB=testdb
    DATABASE_URL=postgresql://testuser:testpass123@postgres:5432/testdb
    JWT_SECRET_KEY=your-secret-key-change-in-production
-   NEXT_PUBLIC_API_URL=http://your-domain.com
+   NEXT_PUBLIC_API_URL=https://api.madeindhaka.com
+   ENVIRONMENT=production
    ```
+
+   **Important**:
+   - Copy values from `.env.coolify` file
+   - `NEXT_PUBLIC_API_URL` must be the public backend URL (https://api.madeindhaka.com)
+   - Generate a secure `JWT_SECRET_KEY` for production: `openssl rand -hex 32`
 
 5. **Enable Preview Deployments**:
    - Go to Settings → Preview Deployments
@@ -220,6 +226,27 @@ coolify-test-app/
 ---
 
 ## 🚨 Known Issues to Watch For
+
+### Issue 0: Port Already Allocated Error
+
+**Symptom**:
+```bash
+# Coolify deployment fails with:
+Error: Bind for 0.0.0.0:8000 failed: port is already allocated
+```
+
+**Cause**:
+- `docker-compose.yml` has `ports:` mappings to host (e.g., `8000:8000`)
+- Coolify shares the same host for all deployments
+- Multiple services can't bind to the same host port
+
+**Solution**:
+- Remove or comment out all `ports:` mappings in docker-compose.yml
+- Use `expose:` instead to document internal ports
+- Coolify's reverse proxy handles external routing
+- For local dev, uncomment `ports:` sections
+
+**Fixed**: Port mappings commented out in docker-compose.yml (see commits)
 
 ### Issue 1: Container Renaming Breaks Service Names
 

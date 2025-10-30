@@ -9,8 +9,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-testdb}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"  # Commented for Coolify - uncomment for local dev
+    expose:
+      - "5432"  # Internal port only
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-testuser}"]
       interval: 10s
@@ -31,8 +33,10 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
       ENVIRONMENT: ${ENVIRONMENT:-development}
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"  # Commented for Coolify - uncomment for local dev
+    expose:
+      - "8000"  # Internal port only
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,8 +70,10 @@ services:
     container_name: coolify-test-frontend
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"  # Commented for Coolify - uncomment for local dev
+    expose:
+      - "3000"  # Internal port only
     depends_on:
       backend:
         condition: service_healthy

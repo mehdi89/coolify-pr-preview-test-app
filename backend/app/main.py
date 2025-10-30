@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+import os
+from datetime import datetime
 
 from app.database import get_db
 from app.routers import auth, todos
@@ -63,4 +65,43 @@ def test_endpoint():
         "message": "Backend API is reachable",
         "service": "backend",
         "status": "ok"
+    }
+
+
+@app.get("/api/environment", tags=["Environment"])
+def get_environment():
+    """
+    Get current environment information
+    Useful for validating PR preview deployments in Coolify
+    """
+    pr_number = os.getenv("PR_NUMBER", None)
+    environment = os.getenv("ENVIRONMENT", "development")
+
+    # Determine environment type
+    if pr_number:
+        env_type = "preview"
+        env_name = f"PR #{pr_number}"
+    elif environment == "production":
+        env_type = "production"
+        env_name = "Production"
+    else:
+        env_type = "development"
+        env_name = "Development"
+
+    return {
+        "environment": {
+            "type": env_type,
+            "name": env_name,
+            "pr_number": pr_number
+        },
+        "deployment": {
+            "timestamp": datetime.utcnow().isoformat(),
+            "api_url": os.getenv("API_URL", "http://localhost:8000"),
+            "frontend_url": os.getenv("FRONTEND_URL", "http://localhost:3000")
+        },
+        "database": {
+            "host": os.getenv("DATABASE_HOST", "postgres"),
+            "name": os.getenv("DATABASE_NAME", "testdb")
+        },
+        "test_change": "PR Preview Validation - This confirms the preview deployment is working!"
     }
